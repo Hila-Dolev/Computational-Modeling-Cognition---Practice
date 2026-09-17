@@ -4,16 +4,22 @@ import MultipleChoiceQuestion from '../../components/MultipleChoiceQuestion';
 import AlgoSimulation from '../../components/AlgoSimulation';
 
 function CompThinking({ onNext }) {
-  const [feedback, setFeedback] = useState(null);
+  // State to track if each question currently has a valid answer
+  const [answersStatus, setAnswersStatus] = useState({
+    CompThinking_q1: false,
+    CompThinking_dragdrop: false
+  });
 
-  const checkQ1 = (e) => {
-    e.preventDefault();
-    if (new FormData(e.target).get('q1') === 'correct') {
-      setFeedback({ text: 'נכון מאוד! מחשב מבצע בדיוק את מה שאומרים לו, לכן ההוראות חייבות להיות מדויקות.', type: 'correct' });
-    } else {
-      setFeedback({ text: 'לא מדויק. נסו שוב.', type: 'incorrect' });
-    }
+  // Dynamically update the status of a specific question
+  const handleStatusChange = (id, hasAnswer) => {
+    setAnswersStatus(prev => ({
+      ...prev,
+      [id]: hasAnswer
+    }));
   };
+
+  // Check if all tracked questions are currently answered
+  const canProceed = Object.values(answersStatus).every(Boolean);
 
   return (
     <div className="section-card">
@@ -30,6 +36,7 @@ function CompThinking({ onNext }) {
         </div>
       </div>
 
+      {/* Passing the dynamic status handler */}
       <MultipleChoiceQuestion 
         id="CompThinking_q1"
         title="מדוע הילדים התקשו לגרום לאבא שלהם להכין סנדוויץ' בצורה נכונה?"
@@ -38,8 +45,8 @@ function CompThinking({ onNext }) {
           { label: 'כי ההוראות שלהם לא היו ספציפיות מספיק.', value: 'not_specific_enough', isCorrect: true },
           { label: 'כי הכלים היו חסרים.', value: 'missing_tools', isCorrect: false }
         ]}
+        onStatusChange={handleStatusChange}
       />
-
 
       <h2>איך ניגשים לבעיה חישובית?</h2>
       <ul>
@@ -53,14 +60,16 @@ function CompThinking({ onNext }) {
       
       <h2>מושגי יסוד בתכנות</h2>
       <ul>
-        <li><strong>קלט/פלט:</strong> המידע שאנחנו מקבלים (קלט) והמידע שאנחנו מציגים בסוף (פלט).</li>
+        <li><strong>קלט/פלט:</strong> המידע שאנחנו מקבלים (קלט) והמידע שאנחנו מציגים בסוף (פלט). למשל, ההזמנה במסעדה שאנחנו עורכים היא הקלט, והאוכל עצמו שנקבל הוא הפלט.</li>
         <li><strong>משתנים:</strong> שמירת ערכים לעבודה.</li>
         <li><strong>משפטי תנאי:</strong> קבלת החלטות ופיצול עץ התוכנה.</li>
         <li><strong>לולאות:</strong> ביצוע פעולות חוזרות.</li>
         <li><strong>תיעוד (הערות):</strong> הסברים בקוד שעוזרים להבין מה התכוונו.</li>
       </ul>
 
+      {/* Adding an ID and passing the dynamic status handler */}
       <DragDropQuiz 
+        id="CompThinking_dragdrop"
         wordBank={['משתנים', 'תנאי', 'קלט', 'לולאות', 'הערות']}
         sentences={[
           ['המידע שהתוכנה מקבלת מהמשתמש נקרא', '.'],
@@ -70,9 +79,31 @@ function CompThinking({ onNext }) {
           ['כדי להסביר לקורא אחר מה הקוד שלנו עושה, נכתוב', '.']
         ]}
         correctAnswers={['קלט', 'משתנים', 'תנאי', 'לולאות', 'הערות']}
+        onStatusChange={handleStatusChange}
       />
 
-      <div className="clearfix"><button className="next-btn" onClick={onNext}>המשך</button></div>
+      {/* Next button area - button aligned to the left, warning text below it */}
+      <div className="clearfix" style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+        <button 
+          className="next-btn" 
+          onClick={onNext}
+          disabled={!canProceed}
+          style={{ 
+            float: 'none', 
+            marginTop: 0, 
+            backgroundColor: canProceed ? '#008080' : '#cccccc',
+            cursor: canProceed ? 'pointer' : 'not-allowed'
+          }}
+        >
+          המשך
+        </button>
+        
+        {!canProceed && (
+          <span style={{ color: '#888', fontSize: '0.8em' }}>
+            * יש לענות על כל שאלות התרגול כדי להמשיך
+          </span>
+        )}
+      </div>
     </div>
   );
 }

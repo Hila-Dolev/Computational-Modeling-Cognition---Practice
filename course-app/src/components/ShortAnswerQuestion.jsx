@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function ShortAnswerQuestion({ id, title, description, correctAnswers, successMessage, errorMessage }) {
+function ShortAnswerQuestion({ id, title, description, correctAnswers, successMessage, errorMessage, onStatusChange }) {
   const [answer, setAnswer] = useState('');
   const [feedback, setFeedback] = useState(null);
+
+  // Dynamically report status whenever the answer text changes
+  useEffect(() => {
+    if (onStatusChange) {
+      // Check if the input is not empty after removing whitespace
+      const hasValidInput = answer.trim() !== '';
+      onStatusChange(id, hasValidInput);
+    }
+  }, [answer, id, onStatusChange]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Clean up spaces before checking
+    // Normalize the input before checking
     const normalizedAnswer = answer.trim();
     
     if (!normalizedAnswer) {
@@ -15,12 +24,12 @@ function ShortAnswerQuestion({ id, title, description, correctAnswers, successMe
       return;
     }
 
-    // Check if the input matches any of the accepted correct answers
+    // Verify against the array of correct answers
     const isCorrect = correctAnswers.includes(normalizedAnswer);
 
     if (isCorrect) {
       setFeedback({ text: successMessage || 'נכון מאוד!', type: 'correct' });
-      // Future Google Drive fetch logic will go here using the 'id'
+      // Future Google Drive integration point
       console.log(`Saving to Drive -> Question ID: ${id}, Answer: ${normalizedAnswer}`);
     } else {
       setFeedback({ text: errorMessage || 'לא מדויק. נסו שוב.', type: 'incorrect' });
@@ -38,7 +47,11 @@ function ShortAnswerQuestion({ id, title, description, correctAnswers, successMe
           id={id}
           name={id}
           value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
+          onChange={(e) => {
+            setAnswer(e.target.value);
+            // Clear feedback dynamically when user starts typing again
+            if (feedback) setFeedback(null); 
+          }}
           placeholder="הקלידו את התשובה כאן..."
           style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', width: '200px' }}
         />

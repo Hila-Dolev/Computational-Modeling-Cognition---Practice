@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function DragDropQuiz({ sentences, wordBank, correctAnswers, onComplete }) {
-  // שומר את המילים שכרגע יושבות בתוך החללים
+function DragDropQuiz({ id, wordBank, sentences, correctAnswers, onStatusChange }) {
+  // Stores the words currently placed in the blanks
   const [filledBlanks, setFilledBlanks] = useState(Array(sentences.length).fill(null));
   const [feedback, setFeedback] = useState(null);
 
@@ -13,32 +13,40 @@ function DragDropQuiz({ sentences, wordBank, correctAnswers, onComplete }) {
     e.preventDefault();
     const word = e.dataTransfer.getData('text/plain');
     
-    // מעדכנים את החלל הספציפי במילה שנגררה אליו
+    // Update the specific blank with the dragged word
     const newFilledBlanks = [...filledBlanks];
     newFilledBlanks[index] = word;
     setFilledBlanks(newFilledBlanks);
   };
 
   const handleDragOver = (e) => {
-    e.preventDefault(); // מאפשר את פעולת השחרור
+    e.preventDefault(); // Allows the drop action
   };
 
   const checkAnswers = () => {
     const isCorrect = filledBlanks.every((word, idx) => word === correctAnswers[idx]);
     if (isCorrect) {
       setFeedback({ text: 'כל הכבוד! כל המשפטים הושלמו נכון.', type: 'correct' });
-      if(onComplete) onComplete();
     } else {
       setFeedback({ text: 'ישנן טעויות. נסו לשנות את מיקום המילים.', type: 'incorrect' });
     }
   };
+
+  // Trigger status change dynamically whenever answers change
+  useEffect(() => {
+    if (onStatusChange) {
+      // Check if there are no empty slots left (null or empty string)
+      const isFullyAnswered = filledBlanks.every(ans => ans !== null && ans !== '');
+      onStatusChange(id, isFullyAnswered);
+    }
+  }, [filledBlanks, id, onStatusChange]);
 
   return (
     <div className="question-box">
       <h3>השלמת משפטים</h3>
       <p>גררו את המילים מהבנק אל החללים המתאימים במשפטים:</p>
       
-      {/* בנק המילים */}
+      {/* Word bank */}
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
         {wordBank.map((word, idx) => (
           <div 
@@ -52,7 +60,7 @@ function DragDropQuiz({ sentences, wordBank, correctAnswers, onComplete }) {
         ))}
       </div>
 
-      {/* המשפטים עם החללים */}
+      {/* Sentences with blanks */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         {sentences.map((sentenceParts, idx) => (
           <div key={idx} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>

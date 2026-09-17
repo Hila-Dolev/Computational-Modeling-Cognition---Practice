@@ -18,6 +18,21 @@ function Variables({ onNext }) {
   const [sourceValue, setSourceValue] = useState('');
   const [simMessage, setSimMessage] = useState('נסו להכניס ערך חדש או להעתיק ערך ממשתנה אחר.');
 
+  const [answeredQuestions, setAnsweredQuestions] = useState({
+    var_q1: false,
+    var_q2: false,
+    var_q3_assignment_op: false
+  });
+
+  const handleQuestionAnswered = (id, hasAnswer) => {
+    setAnsweredQuestions(prev => ({
+      ...prev,
+      [id]: hasAnswer
+    }));
+  };
+
+  const canProceed = Object.values(answeredQuestions).every(Boolean);
+
   // Handle variable assignment logic
   const handleAssign = (e) => {
     e.preventDefault();
@@ -44,16 +59,6 @@ function Variables({ onNext }) {
   };
 
 
-  // Check the fill-in-the-blank question
-  const checkFillIn = (e) => {
-    e.preventDefault();
-    // Accept either <- or = as valid assignment operators in R
-    if (fillInAnswer.trim() === '<-' || fillInAnswer.trim() === '=') {
-      setFillInFeedback({ text: 'מעולה! אופרטור ההשמה ב-R הוא אכן <- (וגם = עובד).', type: 'correct' });
-    } else {
-      setFillInFeedback({ text: 'לא מדויק. נסו להיזכר בסימן המיוחד של R (חץ שמאלה).', type: 'incorrect' });
-    }
-  };
 
   return (
     <div className="section-card">
@@ -181,6 +186,7 @@ print(paste('now, num is:', num))` }
           { label: 'נקבל שגיאה (Error), מכיוון ששם משתנה לא יכול להתחיל במספר.', value: 'error', isCorrect: true },
           { label: 'המשתנה ייווצר בהצלחה.', value: 'success', isCorrect: false }
         ]}
+        onStatusChange={handleQuestionAnswered}
       />
 
       {/* Question 2: Case sensitivity */}
@@ -192,20 +198,41 @@ print(paste('now, num is:', num))` }
           { label: 'נקבל שגיאה על כפילות בשמות.', value: 'duplicate_error', isCorrect: false },
           { label: 'נוצרו שני משתנים נפרדים לחלוטין, כי R רגישה לאותיות גדולות/קטנות.', value: 'case_sensitive', isCorrect: true }
         ]}
+        onStatusChange={handleQuestionAnswered}
       />
 
       {/* Question 3: Fill in the blank (Inline implementation) */}
-      {/* Question 3: Fill in the blank using the new component */}
       <ShortAnswerQuestion 
         id="var_q3_assignment_op"
         title="3. איזה סימן (אופרטור) משמש אותנו כדי להכניס ערך לתוך משתנה ב-R?"
         correctAnswers={['<-', '-> ', '->','=']}
         successMessage="מעולה!"
         errorMessage="לא מדויק. נסו להיזכר בסימן המיוחד של R."
+        onStatusChange={handleQuestionAnswered}
       />
 
-      <div className="clearfix">
-        <button className="next-btn" onClick={onNext}>המשך</button>
+
+      {/* Next button area - button aligned to the left, warning text below it */}
+      <div className="clearfix" style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+        <button 
+          className="next-btn" 
+          onClick={onNext}
+          disabled={!canProceed}
+          style={{ 
+            float: 'none', 
+            marginTop: 0, 
+            backgroundColor: canProceed ? '#008080' : '#cccccc',
+            cursor: canProceed ? 'pointer' : 'not-allowed'
+          }}
+        >
+          המשך
+        </button>
+        
+        {!canProceed && (
+          <span style={{ color: '#888', fontSize: '0.8em' }}>
+            * יש לענות על כל שאלות התרגול כדי להמשיך
+          </span>
+        )}
       </div>
     </div>
   );
