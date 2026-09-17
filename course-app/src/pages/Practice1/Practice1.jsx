@@ -27,7 +27,7 @@ function Practice1() {
           {renderNavLink('comp-thinking', 'חשיבה תכנותית')}
           {renderNavLink('variables', 'משתנים')}
           {renderNavLink('conditions', 'משפטי תנאי')}
-          {renderNavLink('exercise', 'תרגיל כיתה')}
+          {renderNavLink('exercise', 'תרגיל')}
         </ul>
       </div>
 

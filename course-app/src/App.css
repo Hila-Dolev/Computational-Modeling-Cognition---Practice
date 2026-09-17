@@ -172,7 +172,7 @@ code { font-family: 'Consolas', monospace; font-size: 1.05em; }
     
 }
 .submit-btn:hover { background-color: #006666; }
-.feedback { margin-top: 10px; font-weight: bold; }
+.feedback { margin-top: 10px; }
 .correct { color: #1b5e20; }
 .incorrect { color: #811b1b; }
 
@@ -271,3 +271,106 @@ code { font-family: 'Consolas', monospace; font-size: 1.05em; }
     display: block;
 }
 
+/* Force inputs, textareas, buttons, and selects to inherit the global font */
+input, 
+textarea, 
+button, 
+select {
+    font-family: inherit;
+}
+
+/* Force placeholder text specifically to inherit the font */
+::placeholder {
+    font-family: inherit;
+    opacity: 1; /* Ensure cross-browser opacity consistency */
+    color: #999; /* Soft gray color, adjust to match your design */
+}
+
+/* --- Exercise Code Environment --- */
+.code-editor {
+  direction: ltr;
+  text-align: left;
+  background-color: #1e1e1e;
+  padding: 25px;
+  border-radius: 8px;
+  color: #d4d4d4;
+  font-family: monospace;
+  line-height: 2.2;
+  font-size: 16px;
+}
+
+.code-comment { color: #1b5e20; }
+.code-var { color: #9cdcfe; }
+.code-num { color: #b5cea8; }
+.code-bool { color: #569cd6; }
+
+/* Code Input Fields */
+.code-input {
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 4px;
+  padding: 2px 5px;
+  margin: 0 4px;
+  text-align: center;
+  font-family: inherit;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.code-input.default { border-color: #ccc; }
+.code-input.correct { border-color: #1b5e20; }
+.code-input.incorrect { border-color: #811b1b; }
+
+/* --- Next Button Area --- */
+.next-section {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.next-section span {
+  color: #888;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* --- Popup Modal --- */
+.popup-overlay {
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  background-color: #252525;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.popup-title {
+  color: #008080;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.popup-text {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #444;
+}

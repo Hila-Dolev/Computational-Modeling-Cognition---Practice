@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 
-function Exercise() {
-  // שמירת התשובות של הסטודנט
+function Exercise({ onNext }) {
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '' });
-  // שמירת מצב התקינות (true=ירוק, false=אדום, null=רגיל)
   const [status, setStatus] = useState({ q1: null, q2: null, q3: null, q4: null, q5: null });
   const [feedback, setFeedback] = useState(null);
+  const [canProceed, setCanProceed] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleChange = (e) => {
-    setAnswers({ ...answers, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setAnswers(prev => ({ ...prev, [name]: value }));
+    
+    if (status[name] !== null) {
+      setStatus(prev => ({ ...prev, [name]: null }));
+    }
+    if (feedback) setFeedback(null);
   };
 
   const checkSusie = () => {
@@ -23,55 +29,107 @@ function Exercise() {
       q2: (q2Val === '+'),
       q3: (q3Val === '"susie"' || q3Val === 'susie'),
       q4: (q4Val === 'if'),
-      q5: (q5Val === 'else')
+      q5: (q5Val === 'else' || q5Val === 'else if')
     };
 
     setStatus(newStatus);
 
     const allCorrect = Object.values(newStatus).every(val => val === true);
+    // בודק אם כל השדות הוקלדו (לא ריקים)
+    const allAnswered = Object.values(answers).every(val => val.trim() !== '');
+
     if (allCorrect) {
-      setFeedback({ text: 'מצוין! כל התשובות נכונות.', type: 'correct' });
+      setFeedback({ text: 'מצוין! כל התשובות נכונות. החווה של סוזי מנוהלת היטב!', type: 'correct' });
+      setCanProceed(true);
+      console.log(`Saving to Drive -> Final Exercise Completed. Answers:`, answers);
+    } else if (allAnswered) {
+      // כל השדות מלאים אבל יש טעויות - נאפשר המשך
+      setFeedback({ text: 'לא מדויק. נסו שוב', type: 'incorrect' });
+      setCanProceed(true); 
     } else {
-      setFeedback({ text: 'ישנן שגיאות, שימו לב לשדות המסומנים באדום ונסו שוב.', type: 'incorrect' });
+      // חסרים שדות
+      setFeedback({ text: 'יש למלא טקסט בכל השדות כדי לבדוק ולסיים.', type: 'incorrect' });
+      setCanProceed(false);
     }
   };
 
-  // פונקציית עזר להחזרת סגנון התיבה לפי התקינות
-  const getInputStyle = (field, width) => ({
-    width: width,
-    borderColor: status[field] === true ? '#2e7d32' : status[field] === false ? '#c62828' : '#ccc',
-    borderWidth: status[field] !== null ? '2px' : '1px'
-  });
+  const getInputClass = (field) => {
+    if (status[field] === true) return 'code-input correct';
+    if (status[field] === false) return 'code-input incorrect';
+    return 'code-input default';
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
+    if (onNext) onNext();
+  };
 
   return (
     <div className="section-card">
-      <h2>תרגיל כיתה: החווה של סוזי</h2>
-      <p>עזרו לסוזי לנהל את החווה שלה על ידי השלמת החסר בקטעי הקוד הבאים. עליכם להגדיר משתנים, לחשב את סך כל החיות בחווה, ולבדוק אם החיות רעבות.</p>
+      <h1>תרגיל מסכם: החווה של סוזי</h1>
+      <p>
+        עכשיו נחבר את כל מה שלמדנו! עזרו לסוזי לנהל את החווה שלה על ידי השלמת החסר בקטעי הקוד הבאים. 
+        עליכם להגדיר משתנים, לחשב את סך כל החיות בחווה, ולבדוק האם החיות רעבות.
+      </p>
       
-      <div className="exercise-code" style={{ direction: 'ltr', textAlign: 'left', background: '#2d2d2d', padding: '20px', borderRadius: '8px', color: '#ccc', fontFamily: 'monospace', lineHeight: '2' }}>
-        # 1. Assign cows and horses<br />
-        num_cows <input type="text" name="q1" value={answers.q1} onChange={handleChange} style={getInputStyle('q1', '30px')} /> 12<br />
-        num_horses &lt;- 5<br /><br />
+      <div className="code-editor" style={{ margin: '20px 0' }}>
+        <span className="code-comment"># 1. Assign cows and horses</span><br />
+        <span className="code-var">num_cows</span> <input type="text" name="q1" value={answers.q1} onChange={handleChange} className={getInputClass('q1')} style={{ width: '40px' }} /> <span className="code-num">12</span><br />
+        <span className="code-var">num_horses</span> &lt;- <span className="code-num">5</span><br /><br />
         
-        # 2. Calculate total animals<br />
-        susie_farm &lt;- num_cows <input type="text" name="q2" value={answers.q2} onChange={handleChange} style={getInputStyle('q2', '30px')} /> num_horses<br /><br />
+        <span className="code-comment"># 2. Calculate total animals</span><br />
+        <span className="code-var">susie_farm</span> &lt;- <span className="code-var">num_cows</span> <input type="text" name="q2" value={answers.q2} onChange={handleChange} className={getInputClass('q2')} style={{ width: '40px' }} /> <span className="code-var">num_horses</span><br /><br />
         
-        # 3. Assign the farm owner's name ("susie")<br />
-        farm_owner &lt;- <input type="text" name="q3" value={answers.q3} onChange={handleChange} style={getInputStyle('q3', '80px')} /><br /><br />
+        <span className="code-comment"># 3. Assign the farm owner's name ("susie")</span><br />
+        <span className="code-var">farm_owner</span> &lt;- <input type="text" name="q3" value={answers.q3} onChange={handleChange} className={getInputClass('q3')} style={{ width: '90px' }} placeholder='" "' /><br /><br />
         
-        # 4. Did they eat?<br />
-        animals_ate &lt;- FALSE<br /><br />
+        <span className="code-comment"># 4. Did they eat?</span><br />
+        <span className="code-var">animals_ate</span> &lt;- <span className="code-bool">FALSE</span><br /><br />
         
-        # 5. Check if animals are hungry using a condition<br />
-        <input type="text" name="q4" value={answers.q4} onChange={handleChange} style={getInputStyle('q4', '40px')} /> (animals_ate == TRUE) {'{'}<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;animals_hungry &lt;- FALSE<br />
-        {'}'} <input type="text" name="q5" value={answers.q5} onChange={handleChange} style={getInputStyle('q5', '50px')} /> {'{'}<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;animals_hungry &lt;- TRUE<br />
+        <span className="code-comment"># 5. Check if animals are hungry using a condition</span><br />
+        <input type="text" name="q4" value={answers.q4} onChange={handleChange} className={getInputClass('q4')} style={{ width: '50px' }} /> (<span className="code-var">animals_ate</span> == <span className="code-bool">TRUE</span>) {'{'}<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span className="code-var">animals_hungry</span> &lt;- <span className="code-bool">FALSE</span><br />
+        {'}'} <input type="text" name="q5" value={answers.q5} onChange={handleChange} className={getInputClass('q5')} style={{ width: '60px' }} /> {'{'}<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span className="code-var">animals_hungry</span> &lt;- <span className="code-bool">TRUE</span><br />
         {'}'}<br />
       </div>
 
-      <button className="submit-btn" onClick={checkSusie}>בדוק תשובה</button>
+      <button className="submit-btn" onClick={checkSusie} style={{ marginTop: '20px' }}>בדוק תשובה</button>
+      
       {feedback && <div className={`feedback ${feedback.type}`}>{feedback.text}</div>}
+
+      <div className="clearfix next-section">
+        <button 
+          className="next-btn" 
+          onClick={() => setShowPopup(true)}
+          disabled={!canProceed}
+          style={{ float: 'none', marginTop: 0, backgroundColor: canProceed ? '#008080' : '#cccccc', cursor: canProceed ? 'pointer' : 'not-allowed' }}
+        >
+          סיום שיעור
+        </button>
+        
+        {!canProceed && (
+          <span>* יש למלא את כל שדות התרגיל כדי לסיים (לא חייבים לצדוק בהכל)</span>
+        )}
+      </div>
+
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h2 className="popup-title">כל הכבוד! סיימת את תרגול 1.</h2>
+            <p className="popup-text">
+              שימו לב לעבור להסבר על התקנת התוכנה על המחשב, לקראת התרגול הבא.
+            </p>
+            <button 
+              className="submit-btn" 
+              onClick={handlePopupClose}
+              style={{ float: 'none', marginTop: '30px', padding: '12px 30px', fontSize: '18px' }}
+            >
+              מעולה, נמשיך להתקנה
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -172,10 +172,30 @@ print(paste('now, num is:', num))` }
         )}
       </div>
       
-      {/* 5. Summary Questions */}
-      <h3 style={{ borderBottom: '2px solid #e0f2f1', paddingBottom: '10px', marginTop: '40px' }}>
-        תרגול מסכם
-      </h3>
+      {/* 5. Operators and Precedence */}
+      <h2>אופרטורים וסדר פעולות</h2>
+      <p>
+        אחרי שלמדנו לאחסן נתונים בתוך משתנים, נרצה להתחיל לעבוד איתם – לבצע חישובים, להשוות בין ערכים, או לשלב תנאים לוגיים. 
+        בדיוק כמו בחשבון, גם לשפת R יש חוקים ברורים של קדימות. הטבלה הבאה מציגה את האופרטורים המרכזיים בשפה, מסודרים מהפעולה שתתבצע ראשונה (בראש הטבלה) ועד לאחרונה:
+      </p>
+      
+      <div style={{ textAlign: 'center', margin: '25px 0' }}>
+        <img 
+          src="/OperatorsR.png" 
+          alt="Operator Precedence in R" 
+          style={{ 
+            maxWidth: '100%', 
+            height: 'auto', 
+            borderRadius: '8px', 
+            boxShadow: '0 4px 15px rgba(0,0,0,0.05)', 
+            border: '1px solid #e0f2f1' 
+          }} 
+        />
+      </div>
+
+      {/* 6. Summary Questions */}
+      <h2 > תרגול
+      </h2>
 
       {/* Question 1: Naming rules */}
       <MultipleChoiceQuestion 
@@ -210,6 +230,7 @@ print(paste('now, num is:', num))` }
         errorMessage="לא מדויק. נסו להיזכר בסימן המיוחד של R."
         onStatusChange={handleQuestionAnswered}
       />
+
 
 
       {/* Next button area - button aligned to the left, warning text below it */}
