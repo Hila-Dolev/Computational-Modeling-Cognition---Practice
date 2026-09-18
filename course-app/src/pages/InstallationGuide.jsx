@@ -35,73 +35,70 @@ function InstallationGuide({ onNext }) {
         <img src="/R_Setup_Components6.png" alt="התקנת R שלב 6" style={{ maxWidth: '30%', borderRadius: '8px', border: '1px solid #ddd' }} />
       </div>
 
-      {/* 2. התקנת Positron */}
-      <h2>2. התקנת סביבת הפיתוח Positron IDE</h2>
+      {/* 2. התקנת R Studio */}
+      <h2>2. התקנת סביבת הפיתוח R Studio</h2>
       <p>
-        לאחר התקנת R, נתקין את Positron - סביבת פיתוח מבית Posit (היוצרים של RStudio) המבוססת על VS Code ומותאמת למדע נתונים.
+        לאחר התקנת R, נתקין את R Studio - סביבת פיתוח המותאמת לעבודה עם R וניתוח נתונים 
       </p>
       <ul className="theory-list">
-        <li>היכנסו לעמוד ההורדות של Positron והורידו את קובץ ההתקנה.</li>
+        <li>היכנסו ל<a href="https://posit.co/downloads" target="_blank" rel="noreferrer">עמוד ההורדות של RStudio (מבית Posit)</a> והורידו את קובץ ההתקנה החינמי (RStudio Desktop).</li>
       </ul>
 
       <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', margin: '20px 0', flexWrap: 'wrap' }}>
-        <img src="/positronSite.png" alt="אתר פוזיטרון" style={{ maxWidth: '45%', borderRadius: '8px', border: '1px solid #ddd' }} />
-        <img src="/positronDowloadPage.png" alt="הורדת פוזיטרון" style={{ maxWidth: '45%', borderRadius: '8px', border: '1px solid #ddd' }} />
+        <img src="/RSite.png" alt="אתר R Studio" style={{ maxWidth: '45%', borderRadius: '8px', border: '1px solid #ddd' }} />
+        <img src="/RDownloadPage.png" alt="הורדת R Studio" style={{ maxWidth: '45%', borderRadius: '8px', border: '1px solid #ddd' }} />
       </div>
 
       <p>הפעילו את הקובץ ועקבו אחר שלבי ההתקנה:</p>
       <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', margin: '20px 0', flexWrap: 'wrap' }}>
-        <img src="/positronSetup1.png" alt="התקנת פוזיטרון שלב 1" style={{ maxWidth: '30%', borderRadius: '8px', border: '1px solid #ddd' }} />
-        <img src="/positronSetup2.png" alt="התקנת פוזיטרון שלב 2" style={{ maxWidth: '30%', borderRadius: '8px', border: '1px solid #ddd' }} />
-        <img src="/positronSetup3.png" alt="התקנת פוזיטרון שלב 3" style={{ maxWidth: '30%', borderRadius: '8px', border: '1px solid #ddd' }} />
+        <img src="/rstudioSetup1.png" alt="התקנת R Studio שלב 1" style={{ maxWidth: '30%', borderRadius: '8px', border: '1px solid #ddd' }} />
+        <img src="/rstudioSetup2.png" alt="התקנת R Studio שלב 2" style={{ maxWidth: '30%', borderRadius: '8px', border: '1px solid #ddd' }} />
+        <img src="/rstudioSetup3.png" alt="התקנת R Studio שלב 3" style={{ maxWidth: '30%', borderRadius: '8px', border: '1px solid #ddd' }} />
       </div>
-      <p>וזהו! אנחנו מוכנים להתחיל לעבוד. עכשיו כדאי שתתנסו בפתיחת קובץ חדש (מסוג ipynb) ובתחילת העבודה. <br/>בשלבים הבאים יש סרטונים והסברים שיכולים לעזור לעזור בכל שלב בדרך.</p>
+      <p>וזהו! אנחנו מוכנים להתחיל לעבוד. עכשיו כדאי שתתנסו בפתיחת קובץ חדש (מסוג R Markdown) ובתחילת העבודה. <br/>בשלבים הבאים יש סרטונים והסברים שיכולים לעזור לעזור בכל שלב בדרך.</p>
 
 
-      {/* 3. שימוש ב-Positron */}
-      <h2>3. שימוש ב-Positron</h2>
-      <p>כדי להכיר את הממשק ולהבין כיצד החלונות השונים פועלים יחד, צפו בסרטון ההדרכה הבא:</p>
+      {/* 3. תחילת עבודה */}
+      <h2>3. תחילת העבודה: פתיחת פרויקט וקובץ המחברת (Notebook)</h2>
+      
+      <p>
+        בקורס שלנו נעבוד עם קובצי <strong>R Markdown</strong> (סיומת <code>.Rmd</code>). זהו פורמט המאפשר לשלב באותו קובץ גם קוד, גם טקסט והסברים, וגם את תוצאות ההרצה (למשל גרפים וטבלאות) מיד לאחר הקוד שמייצר אותן. 
+      </p>
+
+      <ol className="theory-list">
+        <li>
+          <strong>יצירת הקובץ:</strong> בתפריט העליון של RStudio, לחצו על <code>File &gt; New File &gt; R Markdown</code>. הזינו כותרת למסמך, ודאו שפורמט הפלט הוא <strong>HTML</strong>, ולחצו OK. לאחר מכן, מחקו את כל טקסט ההדגמה שמופיע מתחת לפסקת ההגדרות העליונה (התחומה ב-<code>---</code>).
+        </li>
+        <li>
+          <strong>יישור לעברית (RTL):</strong> כדי שההסברים יוצגו כראוי מימין לשמאל, הקלידו את התגית <code>&lt;div dir="rtl"&gt;</code> מיד מתחת לפסקת ההגדרות, ואת התגית הסוגרת <code>&lt;/div&gt;</code> בשורה האחרונה של המסמך.
+        </li>
+        <li>
+          <strong>כתיבה ותאי קוד (Source Mode):</strong> כברירת מחדל, הקובץ נפתח בתצוגת קוד (Source). טקסט והסברים נכתבים בחופשיות. כדי להוסיף קוד R, יש ליצור "תא קוד" (Chunk) שמתחיל בשלושה גרשיים <code>```{"{r}"}</code> ומסתיים בשלושה גרשיים <code>```</code>. ניתן להקליד זאת ידנית, או ללחוץ בסרגל הכלים על כפתור ה-<strong>Insert</strong> (סמל ריבוע ירוק עם האות C) ולבחור ב-<strong>R</strong>.
+        </li>
+        <li>
+          <strong>הפקת תוצר להגשה:</strong> בסיום הכתיבה, לחצו על כפתור ה-<strong>Knit</strong> (סמל של כדור צמר) בסרגל העליון. פעולה זו תריץ את כל הקוד שכתבתם ותייצר עבורכם קובץ HTML מעוצב ונקי שמוכן להגשה.
+        </li>
+        <li>
+          <strong>טיפ - סביבת כתיבה ויזואלית:</strong> לעבודה נוחה יותר עם שילוב של טקסט בעברית ומונחים באנגלית, מומלץ לעבור לתצוגת <strong>Visual</strong> (באמצעות הכפתור בסרגל הכלים העליון של המסמך). מצב זה מתנהג כמו מעבד תמלילים (בדומה ל-Word) ומסתיר את סימני העיצוב (כמו כוכביות או גרשיים), מה שמקל מאוד על כתיבת ההסברים.
+        </li>
+      </ol>
+
+      <p style={{ marginTop: '30px', fontWeight: 'bold' }}>כאן מחכים סרטונים מסכם על כל חווית ההתקנה והשימוש בתוכנות:</p>
       
       <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%' }}>
         <div className="video-container">
           <iframe 
-            src="https://www.youtube.com/embed/aNEbn-W_oZc" 
+            src="https://youtube.com/embed/K418swtFnik?si=SsfRdZUTCk3HGkJS" 
             title="YouTube video player" 
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowFullScreen>
           </iframe>
         </div>
-      </div>
 
-      {/* 4. תחילת עבודה */}
-      <h2>4. תחילת העבודה: פתיחת פרויקט וקובץ המחברת (Notebook)</h2>
-      
-      <p>
-        בקורס שלנו נעבוד עם קובצי <strong>ipynb (Jupyter Notebook)</strong>. זהו פורמט של "מחברת" המאפשר לשלב באותו קובץ גם קוד, גם טקסט והסברים, וגם את תוצאות ההרצה (למשל גרפים וטבלאות) מיד לאחר הקוד שמייצר אותן. זהו הכלי המקובל והנוח ביותר כיום בעולמות מדעי הנתונים.
-      </p>
-
-      <ol className="theory-list">
-        <li>
-          <strong>יצירת תיקיית עבודה:</strong> בתפריט העליון מצד שמאל, לחצו על <code>File &gt; Open Folder</code>. בחרו (או צרו) תיקייה מסודרת במחשב שלכם שבה תרכזו את כל חומרי הקורס. סייר הקבצים בצד שמאל יציג כעת את תוכן התיקייה. מומלץ ליצור תיקייה חדשה בשם <strong>Course</strong> או שם אחר שתבחרו, תחת תיקיית projects במחשב, או ישירות ב-documents, ולהכניס לתוכה את כל הקבצים והמחברות של הקורס.
-        </li>
-        <li>
-          <strong>יצירת הקובץ:</strong> בחלונית סייר הקבצים (Explorer) משמאל, לחצו על הסמל של הוספת קובץ חדש (New File). תנו לקובץ שם הגיוני באנגלית ו<strong>חובה</strong> להקפיד לסיים את השם בסיומת <code>.ipynb</code>. לחצו Enter לאישור.
-        </li>
-        <li>
-          <strong>הגדרת שפת ההרצה (Kernel):</strong> כדי שהמחברת תדע שאנו כותבים ב-R, הסתכלו בפינה הימנית העליונה של חלון המחברת שזה עתה פתחתם. לחצו על הכפתור שמופיע שם (לרוב יופיע כ-Select Kernel) ובחרו מתוך הרשימה את שפת <strong>R</strong>.
-        </li>
-        <li>
-          <strong>כתיבת קוד:</strong> כעת תוכלו ללחוץ על הכפתור <code>+ Code</code> שמופיע בתחתית התא הנוכחי כדי להוסיף תא קוד חדש. כתבו את הפקודות שלכם, ולחצו על כפתור ההפעלה (סמל ה-Play דמוי המשולש) המופיע משמאל לתא כדי להריץ את הקוד ולראות את התוצאה מיד מתחתיו.
-        </li>
-      </ol>
-
-      <p style={{ marginTop: '30px', fontWeight: 'bold' }}>כאן מחכה סרטון מסכם על כל חווית ההתקנה והשימוש בתוכנות:</p>
-      
-      <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%' }}>
         <div className="video-container">
           <iframe 
-            src="https://www.youtube.com/embed/mru9z50IOhI" 
+            src="https://youtube.com/embed/55ZZZhpt0vY?si=yobNNtYie_15Zlb0" 
             title="YouTube video player" 
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 

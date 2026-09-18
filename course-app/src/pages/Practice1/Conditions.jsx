@@ -184,7 +184,7 @@ if (num_1 == num_2) {
         </button>
         
         {!canProceed && (
-          <span style={{ color: '#888', fontWeight: 'bold', fontSize: '0.9em' }}>
+          <span style={{ color: '#888', fontSize: '0.8em' }}>
             * יש לענות על כל שאלות התרגול כדי להמשיך
           </span>
         )}

@@ -49,7 +49,7 @@ function MultipleChoiceQuestion({ id, title, options, onStatusChange }) {
             <label htmlFor={`${id}_${index}`}>{option.label}</label>
           </div>
         ))}
-        <button type="submit" className="submit-btn" style={{ float: 'none', marginTop: '10px' }}>בדוק</button>
+        <button type="submit" className="submit-btn" style={{ float: 'none', marginTop: '10px' }}>בדיקה</button>
       </form>
       {feedback && <div className={`feedback ${feedback.type}`}>{feedback.text}</div>}
     </div>
