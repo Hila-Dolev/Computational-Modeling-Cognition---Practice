@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { saveAnswerToSheet } from '../../utils/apiService';
 
-function Exercise({ onNext }) {
+function Exercise({ username, startTime, onNext }) {
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '' });
   const [status, setStatus] = useState({ q1: null, q2: null, q3: null, q4: null, q5: null });
   const [feedback, setFeedback] = useState(null);
@@ -35,22 +36,34 @@ function Exercise({ onNext }) {
     setStatus(newStatus);
 
     const allCorrect = Object.values(newStatus).every(val => val === true);
-    // בודק אם כל השדות הוקלדו (לא ריקים)
     const allAnswered = Object.values(answers).every(val => val.trim() !== '');
 
     if (allCorrect) {
       setFeedback({ text: 'מצוין! כל התשובות נכונות. החווה של סוזי מנוהלת היטב!', type: 'correct' });
       setCanProceed(true);
-      console.log(`Saving to Drive -> Final Exercise Completed. Answers:`, answers);
     } else if (allAnswered) {
-      // כל השדות מלאים אבל יש טעויות - נאפשר המשך
       setFeedback({ text: 'לא מדויק. נסו שוב', type: 'incorrect' });
       setCanProceed(true); 
     } else {
-      // חסרים שדות
       setFeedback({ text: 'יש למלא טקסט בכל השדות כדי לבדוק ולסיים.', type: 'incorrect' });
       setCanProceed(false);
     }
+  };
+
+  // Save the answers and show the completion popup
+  const handleFinishClick = () => {
+    const payload = {
+      username,
+      startTime,
+      susie_q1: answers.q1,
+      susie_q2: answers.q2,
+      susie_q3: answers.q3,
+      susie_q4: answers.q4,
+      susie_q5: answers.q5
+    };
+    
+    saveAnswerToSheet("תרגול 1", payload);
+    setShowPopup(true);
   };
 
   const getInputClass = (field) => {
@@ -101,7 +114,7 @@ function Exercise({ onNext }) {
       <div className="clearfix next-section">
         <button 
           className="next-btn" 
-          onClick={() => setShowPopup(true)}
+          onClick={handleFinishClick} // <-- Use the new function to save and show popup
           disabled={!canProceed}
           style={{ float: 'none', marginTop: 0, backgroundColor: canProceed ? '#008080' : '#cccccc', cursor: canProceed ? 'pointer' : 'not-allowed' }}
         >
@@ -109,7 +122,7 @@ function Exercise({ onNext }) {
         </button>
         
         {!canProceed && (
-          <span>* יש למלא את כל שדות התרגיל כדי לסיים (לא חייבים לצדוק בהכל)</span>
+          <span>* יש למלא את כל שדות התרגיל כדי לסיים</span>
         )}
       </div>
 

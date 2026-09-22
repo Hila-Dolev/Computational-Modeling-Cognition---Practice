@@ -5,10 +5,9 @@ import Conditions from './Conditions';
 import Exercise from './Exercise';
 import CompThinking from './CompThinking';
 
-function Practice1() {
+function Practice1({ username, startTime }) {
   const [activeSection, setActiveSection] = useState('intro');
 
-  // פונקציית עזר ליצירת קישורי הניווט בסרגל הצד
   const renderNavLink = (id, text) => (
     <li>
       <a href="#" 
@@ -18,9 +17,9 @@ function Practice1() {
       </a>
     </li>
   );
-
   return (
-    <div style={{ display: 'flex', width: '100%' }}>
+    <div className="container">
+      {/* Side nav logic remains */}
       <div className="side-nav">
         <ul>
           {renderNavLink('intro', 'היכרות ומבוא')}
@@ -32,11 +31,12 @@ function Practice1() {
       </div>
 
       <div className="main-content">
-        {activeSection === 'intro' && <Intro onNext={() => setActiveSection('comp-thinking')} />}
-        {activeSection === 'comp-thinking' && <CompThinking onNext={() => setActiveSection('variables')} />}
-        {activeSection === 'variables' && <Variables onNext={() => setActiveSection('conditions')} />}
-        {activeSection === 'conditions' && <Conditions onNext={() => setActiveSection('exercise')} />}
-        {activeSection === 'exercise' && <Exercise />}
+        {/* Pass down to all sections */}
+        {activeSection === 'intro' && <Intro username={username} startTime={startTime} onNext={() => setActiveSection('comp-thinking')} />}
+        {activeSection === 'comp-thinking' && <CompThinking username={username} startTime={startTime} onNext={() => setActiveSection('variables')} />}
+        {activeSection === 'variables' && <Variables username={username} startTime={startTime} onNext={() => setActiveSection('conditions')} />}
+        {activeSection === 'conditions' && <Conditions username={username} startTime={startTime} onNext={() => setActiveSection('exercise')} />}
+        {activeSection === 'exercise' && <Exercise username={username} startTime={startTime} />}
       </div>
     </div>
   );

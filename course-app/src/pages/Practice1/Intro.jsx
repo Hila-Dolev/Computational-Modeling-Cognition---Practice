@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import OpenQuestion from '../../components/OpenQuestion';
+import { saveAnswerToSheet } from '../../utils/apiService';
 
-function Intro({ onNext }) {
-  const [feedback, setFeedback] = useState(null);
+function Intro({ username, startTime, onNext }) {
+  const [answersData, setAnswersData] = useState({ intro_q1: '' });
 
-  const checkQ1 = (e) => {
-    e.preventDefault();
-    if (new FormData(e.target).get('q1') === 'correct') {
-      setFeedback({ text: 'נכון מאוד! הבנה של הדרישות היא השלב הראשון לכל פתרון.', type: 'correct' });
-    } else {
-      setFeedback({ text: 'לא מדויק. נסו שוב.', type: 'incorrect' });
-    }
+  const handleAnswer = (id, value) => {
+    setAnswersData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleNextClick = () => {
+    const payload = {
+      username,
+      startTime,
+      ...answersData
+    };
+    saveAnswerToSheet("תרגול 1", payload);
+    onNext();
   };
 
   return (
@@ -39,13 +45,13 @@ function Intro({ onNext }) {
         title="שאלת מבוא"
         text="מה ההיכרות שלכם עם עולמות התכנות והחישוביות?"
         placeholder="ספרו לנו על הרקע שלכם, על מה שאתם יודעים ועל מה שאתם רוצים ללמוד"
-         />
+        onAnswer={handleAnswer}
+      />
 
-         <div className="clearfix">
-        <button className="next-btn" onClick={onNext}>המשך</button>
+      <div className="clearfix" style={{ marginTop: '20px' }}>
+        <button className="next-btn" onClick={handleNextClick} style={{ float: 'left' }}>המשך</button>
       </div>
-
-      </div>
+    </div>
   );
 }
 

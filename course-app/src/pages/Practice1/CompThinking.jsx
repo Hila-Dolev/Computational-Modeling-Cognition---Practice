@@ -2,24 +2,38 @@ import React, { useState } from 'react';
 import DragDropQuiz from '../../components/DragDropQuiz';
 import MultipleChoiceQuestion from '../../components/MultipleChoiceQuestion';
 import AlgoSimulation from '../../components/AlgoSimulation';
+import { saveAnswerToSheet } from '../../utils/apiService';
 
-function CompThinking({ onNext }) {
-  // State to track if each question currently has a valid answer
+function CompThinking({ username, startTime, onNext }) {
   const [answersStatus, setAnswersStatus] = useState({
     CompThinking_q1: false,
     CompThinking_dragdrop: false
   });
 
-  // Dynamically update the status of a specific question
+  const [answersData, setAnswersData] = useState({
+    CompThinking_q1: '',
+    CompThinking_dragdrop: ''
+  });
+
   const handleStatusChange = (id, hasAnswer) => {
-    setAnswersStatus(prev => ({
-      ...prev,
-      [id]: hasAnswer
-    }));
+    setAnswersStatus(prev => ({ ...prev, [id]: hasAnswer }));
   };
 
-  // Check if all tracked questions are currently answered
+  const handleAnswerData = (id, value) => {
+    setAnswersData(prev => ({ ...prev, [id]: value }));
+  };
+
   const canProceed = Object.values(answersStatus).every(Boolean);
+
+  const handleNextClick = () => {
+    const payload = {
+      username,
+      startTime,
+      ...answersData
+    };
+    saveAnswerToSheet("תרגול 1", payload);
+    onNext();
+  };
 
   return (
     <div className="section-card">
@@ -36,7 +50,6 @@ function CompThinking({ onNext }) {
         </div>
       </div>
 
-      {/* Passing the dynamic status handler */}
       <MultipleChoiceQuestion 
         id="CompThinking_q1"
         title="מדוע הילדים התקשו לגרום לאבא שלהם להכין סנדוויץ' בצורה נכונה?"
@@ -46,6 +59,7 @@ function CompThinking({ onNext }) {
           { label: 'כי הכלים היו חסרים.', value: 'missing_tools', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <h2>איך ניגשים לבעיה חישובית?</h2>
@@ -67,7 +81,6 @@ function CompThinking({ onNext }) {
         <li><strong>תיעוד (הערות):</strong> הסברים בקוד שעוזרים להבין מה התכוונו.</li>
       </ul>
 
-      {/* Adding an ID and passing the dynamic status handler */}
       <DragDropQuiz 
         id="CompThinking_dragdrop"
         wordBank={['משתנים', 'תנאי', 'קלט', 'לולאות', 'הערות']}
@@ -80,13 +93,13 @@ function CompThinking({ onNext }) {
         ]}
         correctAnswers={['קלט', 'משתנים', 'תנאי', 'לולאות', 'הערות']}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
-      {/* Next button area - button aligned to the left, warning text below it */}
       <div className="clearfix" style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
         <button 
           className="next-btn" 
-          onClick={onNext}
+          onClick={handleNextClick}
           disabled={!canProceed}
           style={{ 
             float: 'none', 

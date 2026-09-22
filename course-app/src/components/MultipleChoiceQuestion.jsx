@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-function MultipleChoiceQuestion({ id, title, options, onStatusChange }) {
+function MultipleChoiceQuestion({ id, title, options, onStatusChange, onAnswer }) {
   const [selectedOption, setSelectedOption] = useState('');
   const [feedback, setFeedback] = useState(null);
 
-  // מדווח דינמית לאב ברגע שיש (או אין) בחירה
+  // Report status to parent dynamically
   useEffect(() => {
     if (onStatusChange) {
       const hasAnswer = selectedOption !== '';
@@ -22,7 +22,6 @@ function MultipleChoiceQuestion({ id, title, options, onStatusChange }) {
     const option = options.find(opt => opt.value === selectedOption);
     if (option && option.isCorrect) {
       setFeedback({ text: 'נכון מאוד!', type: 'correct' });
-      console.log(`Saving to Drive -> Question ID: ${id}, Answer: ${selectedOption}`);
     } else {
       setFeedback({ text: 'תשובה שגויה, נסו שוב.', type: 'incorrect' });
     }
@@ -41,8 +40,14 @@ function MultipleChoiceQuestion({ id, title, options, onStatusChange }) {
               value={option.value}
               checked={selectedOption === option.value}
               onChange={(e) => {
-                setSelectedOption(e.target.value);
-                if (feedback) setFeedback(null); // מנקה את המשוב הקודם כשבוחרים מחדש
+                const val = e.target.value;
+                setSelectedOption(val);
+                if (feedback) setFeedback(null); // Clear previous feedback
+                
+                // Report the selected answer to the parent component immediately
+                if (onAnswer) {
+                  onAnswer(id, val);
+                }
               }}
               style={{ marginRight: '8px' }}
             />

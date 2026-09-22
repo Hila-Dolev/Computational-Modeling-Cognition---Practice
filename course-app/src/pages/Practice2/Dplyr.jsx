@@ -266,7 +266,7 @@ print(clean_data)`}
               למי שמעוניין להעמיק ולתרגל בעצמו את סביבת העבודה והקוד, הכנו קובץ מחברת לתרגול עצמי.
             </p>
             <a 
-              href="/self_practice_2.ipynb" 
+              href="/self_practice_2.rmd" 
               download
               className="submit-btn" 
               onClick={() => {

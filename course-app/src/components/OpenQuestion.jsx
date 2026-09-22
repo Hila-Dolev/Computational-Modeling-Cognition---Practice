@@ -1,32 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 
-function OpenQuestion({ title, text, placeholder = "הקלידו את תשובתכם כאן (לא חובה)...", questionId }) {
+function OpenQuestion({ title, text, placeholder = "הקלידו את תשובתכם כאן (לא חובה)...", questionId, onAnswer }) {
   const [answer, setAnswer] = useState('');
-  
-  // A ref to keep track of the latest answer value for the unmount cleanup function
-  const answerRef = useRef('');
 
-  // Update both the state (for display) and the ref (for saving)
   const handleChange = (e) => {
-    setAnswer(e.target.value);
-    answerRef.current = e.target.value;
-  };
-
-  // The function that actually handles the saving process
-  const handleSave = () => {
-    const finalAnswer = answerRef.current.trim();
-    if (finalAnswer !== '') {
-      // Future Google Drive fetch logic will go here
-      console.log(`Saving to Drive -> Question: ${questionId}, Answer: ${finalAnswer}`);
+    const val = e.target.value;
+    setAnswer(val);
+    
+    // Report to parent immediately on every keystroke
+    if (onAnswer) {
+      onAnswer(questionId, val);
     }
   };
-
-  // Save automatically when the component is unmounted (e.g., user clicks "Next")
-  useEffect(() => {
-    return () => {
-      handleSave();
-    };
-  }, []);
 
   return (
     <div className="question-box">
@@ -36,7 +21,6 @@ function OpenQuestion({ title, text, placeholder = "הקלידו את תשובת
       <textarea 
         value={answer}
         onChange={handleChange}
-        onBlur={handleSave} // Also save when the user clicks outside the textarea
         rows="4" 
         placeholder={placeholder}
         style={{ 

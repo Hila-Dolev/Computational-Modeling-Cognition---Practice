@@ -82,18 +82,23 @@ h2 {
     padding: 40px;
     max-width: 900px;
     margin: 0 auto;
+    min-width: 0; /* הכרחי כדי שגלילה פנימית תעבוד ב-Flex */
+    overflow-x: hidden; /* מונע גלישה אופקית החוצה */
 }
 
 /* Side Navigation */
 .side-nav {
-    width: 250px;
+    /* במקום רוחב קבוע של 250px, נבקש שהגודל יתאים לתוכן עם מינימום מסוים */
+    width: max-content; 
+    min-width: 200px; /* רוחב התחלתי יפה, יגדל אם התוכן דורש זאת */
+    flex-shrink: 0; /* מונע מהסרגל להתכווץ בגלל התוכן המרכזי */
     background-color: var(--color-light);
     padding: 20px;
     box-shadow: -2px 0 5px rgba(0,0,0,0.05);
     height: calc(100vh - 70px);
     overflow-y: auto;
 }
-.side-nav ul { list-style: none; padding: 0; }
+.side-nav ul { list-style: none; padding: 0; margin: 0; }
 .side-nav li { margin-bottom: 15px; }
 .side-nav a {
     text-decoration: none;
@@ -103,8 +108,10 @@ h2 {
     padding: 8px;
     border-radius: 4px;
     transition: background 0.2s;
+    white-space: nowrap; /* מונע ממילים להישבר לשורות חדשות */
 }
-.side-nav a:hover, .side-nav a.active-link { background-color: var(--color-primary-superlight); }
+.side-nav a:hover, .side-nav a.active-link { background-color: var(--color-primary-super-light); }
+
 
 /* Content Cards */
 .section-card {
@@ -579,4 +586,40 @@ button:disabled,
 .sum-action-text .success-text {
     color: var(--color-primary, var(--color-primary));
     font-weight: bold;
+}
+
+/* --- Responsive Mobile Layout --- */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        min-height: auto;
+        width: 100%;
+        overflow-x: hidden; /* מכת מנע נוספת: חותך כל תוכן שעדיין ינסה לחרוג אופקית */
+    }
+
+    .side-nav {
+        width: 100%;
+        min-width: 100%;
+        box-sizing: border-box; /* <--- הפתרון: מכניס את הריווח לתוך חישוב הרוחב */
+        height: auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        padding: 10px 20px;
+    }
+
+    .side-nav ul {
+        display: flex;
+        gap: 15px;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .side-nav li {
+        margin-bottom: 0;
+    }
+    
+    .main-content {
+        width: 100%; /* מוודא שהתוכן עצמו לא חורג */
+        box-sizing: border-box; /* <--- הפתרון לתוכן המרכזי */
+        padding: 20px;
+    }
 }

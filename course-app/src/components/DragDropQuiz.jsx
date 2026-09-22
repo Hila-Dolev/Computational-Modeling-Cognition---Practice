@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function DragDropQuiz({ id, wordBank, sentences, correctAnswers, onStatusChange }) {
-  // Stores the words currently placed in the blanks
+function DragDropQuiz({ id, wordBank, sentences, correctAnswers, onStatusChange, onAnswer }) {
   const [filledBlanks, setFilledBlanks] = useState(Array(sentences.length).fill(null));
   const [feedback, setFeedback] = useState(null);
 
@@ -13,14 +12,13 @@ function DragDropQuiz({ id, wordBank, sentences, correctAnswers, onStatusChange 
     e.preventDefault();
     const word = e.dataTransfer.getData('text/plain');
     
-    // Update the specific blank with the dragged word
     const newFilledBlanks = [...filledBlanks];
     newFilledBlanks[index] = word;
     setFilledBlanks(newFilledBlanks);
   };
 
   const handleDragOver = (e) => {
-    e.preventDefault(); // Allows the drop action
+    e.preventDefault(); 
   };
 
   const checkAnswers = () => {
@@ -32,21 +30,24 @@ function DragDropQuiz({ id, wordBank, sentences, correctAnswers, onStatusChange 
     }
   };
 
-  // Trigger status change dynamically whenever answers change
   useEffect(() => {
     if (onStatusChange) {
-      // Check if there are no empty slots left (null or empty string)
       const isFullyAnswered = filledBlanks.every(ans => ans !== null && ans !== '');
       onStatusChange(id, isFullyAnswered);
     }
-  }, [filledBlanks, id, onStatusChange]);
+    
+    // Continuously update the parent with current answers
+    if (onAnswer) {
+      const currentAnswer = filledBlanks.join(', ');
+      onAnswer(id, currentAnswer);
+    }
+  }, [filledBlanks, id, onStatusChange, onAnswer]);
 
   return (
     <div className="question-box">
       <h3>השלמת משפטים</h3>
       <p>גררו את המילים מהבנק אל החללים המתאימים במשפטים:</p>
       
-      {/* Word bank */}
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
         {wordBank.map((word, idx) => (
           <div 
@@ -60,7 +61,6 @@ function DragDropQuiz({ id, wordBank, sentences, correctAnswers, onStatusChange 
         ))}
       </div>
 
-      {/* Sentences with blanks */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         {sentences.map((sentenceParts, idx) => (
           <div key={idx} style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>

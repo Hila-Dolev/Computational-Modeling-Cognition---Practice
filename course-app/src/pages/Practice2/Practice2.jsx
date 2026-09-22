@@ -19,8 +19,8 @@ function Practice2() {
   );
 
   return (
-    <div style={{ display: 'flex', width: '100%' }}>
-      <div className="side-nav">
+  <div className="container">
+    <div className="side-nav">
         <ul>
           {renderNavLink('loops', 'לולאות')}
           {renderNavLink('functions', 'פונקציות')}

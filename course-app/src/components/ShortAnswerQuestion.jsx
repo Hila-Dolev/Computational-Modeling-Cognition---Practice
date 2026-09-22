@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-function ShortAnswerQuestion({ id, title, description, correctAnswers, successMessage, errorMessage, onStatusChange }) {
+function ShortAnswerQuestion({ id, title, description, correctAnswers, successMessage, errorMessage, onStatusChange, onAnswer }) {
   const [answer, setAnswer] = useState('');
   const [feedback, setFeedback] = useState(null);
 
-  // Dynamically report status whenever the answer text changes
   useEffect(() => {
     if (onStatusChange) {
-      // Check if the input is not empty after removing whitespace
       const hasValidInput = answer.trim() !== '';
       onStatusChange(id, hasValidInput);
     }
@@ -15,8 +13,6 @@ function ShortAnswerQuestion({ id, title, description, correctAnswers, successMe
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Normalize the input before checking
     const normalizedAnswer = answer.trim();
     
     if (!normalizedAnswer) {
@@ -24,13 +20,10 @@ function ShortAnswerQuestion({ id, title, description, correctAnswers, successMe
       return;
     }
 
-    // Verify against the array of correct answers
     const isCorrect = correctAnswers.includes(normalizedAnswer);
 
     if (isCorrect) {
       setFeedback({ text: successMessage || 'נכון מאוד!', type: 'correct' });
-      // Future Google Drive integration point
-      console.log(`Saving to Drive -> Question ID: ${id}, Answer: ${normalizedAnswer}`);
     } else {
       setFeedback({ text: errorMessage || 'לא מדויק. נסו שוב.', type: 'incorrect' });
     }
@@ -48,9 +41,14 @@ function ShortAnswerQuestion({ id, title, description, correctAnswers, successMe
           name={id}
           value={answer}
           onChange={(e) => {
-            setAnswer(e.target.value);
-            // Clear feedback dynamically when user starts typing again
+            const val = e.target.value;
+            setAnswer(val);
             if (feedback) setFeedback(null); 
+            
+            // Continuous update to parent
+            if (onAnswer) {
+              onAnswer(id, val);
+            }
           }}
           placeholder="הקלידו את התשובה כאן..."
           style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', width: '200px' }}
