@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import MultipleChoiceQuestion from '../../components/MultipleChoiceQuestion';
+import { saveAnswerToSheet } from '../../utils/apiService';
 
-function Functions({ onNext }) {
+function Functions({ username, startTime, onNext }) {
   const [showTerminalBasic, setShowTerminalBasic] = useState(false);
   const [showTerminalDefault, setShowTerminalDefault] = useState(false);
 
@@ -11,11 +12,31 @@ function Functions({ onNext }) {
     func_q3: false
   });
 
+  const [answersData, setAnswersData] = useState({
+    func_q1: '',
+    func_q2: '',
+    func_q3: ''
+  });
+
   const handleStatusChange = (id, hasAnswer) => {
     setAnsweredQuestions(prev => ({ ...prev, [id]: hasAnswer }));
   };
 
+  const handleAnswerData = (id, value) => {
+    setAnswersData(prev => ({ ...prev, [id]: value }));
+  };
+
   const canProceed = Object.values(answeredQuestions).every(Boolean);
+
+  const handleNextClick = () => {
+    const payload = {
+      username,
+      startTime,
+      ...answersData
+    };
+    saveAnswerToSheet("תרגול 2", payload);
+    onNext();
+  };
 
   return (
     <div className="section-card">
@@ -126,6 +147,7 @@ print(greet())`}
           { label: 'השם של הפונקציה שדרכו אנחנו קוראים לה.', value: 'name', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <MultipleChoiceQuestion 
@@ -136,6 +158,7 @@ print(greet())`}
           { label: 'למנוע מהפונקציה להחזיר שגיאות (Errors) באופן כללי בכל הקוד.', value: 'no_error', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <MultipleChoiceQuestion 
@@ -147,12 +170,13 @@ print(greet())`}
           { label: 'היא מגדירה מהו הערך והתוצאה הסופית שהפונקציה תפלוט חזרה החוצה לאחר סיום העיבוד.', value: 'output_def', isCorrect: true }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <div className="next-section">
         <button 
           className="next-btn" 
-          onClick={onNext}
+          onClick={handleNextClick}
           disabled={!canProceed}
         >
           המשך

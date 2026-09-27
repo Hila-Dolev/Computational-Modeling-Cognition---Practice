@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { saveAnswerToSheet } from '../../utils/apiService';
 
-function Exercise2({ onNext }) {
+function Exercise2({ username, startTime, onNext }) {
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '' });
   const [status, setStatus] = useState({ q1: null, q2: null, q3: null, q4: null });
   const [feedback, setFeedback] = useState(null);
@@ -40,6 +41,19 @@ function Exercise2({ onNext }) {
       setFeedback({ text: 'יש להשלים את כל החסר בקוד.', type: 'incorrect' });
       setCanProceed(false);
     }
+  };
+
+  const handleNextClick = () => {
+    const payload = {
+      username,
+      startTime,
+      ex2_q1: answers.q1,
+      ex2_q2: answers.q2,
+      ex2_q3: answers.q3,
+      ex2_q4: answers.q4
+    };
+    saveAnswerToSheet("תרגול 2", payload);
+    onNext();
   };
 
   const getInputClass = (field) => {
@@ -86,7 +100,7 @@ function Exercise2({ onNext }) {
       {feedback && <div className={`feedback ${feedback.type}`}>{feedback.text}</div>}
 
       <div className="clearfix next-section">
-        <button className="next-btn" onClick={onNext} disabled={!canProceed} style={{ float: 'none', marginTop: 0, backgroundColor: canProceed ? '#008080' : '#cccccc', cursor: canProceed ? 'pointer' : 'not-allowed' }}>
+        <button className="next-btn" onClick={handleNextClick} disabled={!canProceed} style={{ float: 'none', marginTop: 0, backgroundColor: canProceed ? '#008080' : '#cccccc', cursor: canProceed ? 'pointer' : 'not-allowed' }}>
           המשך
         </button>
       </div>

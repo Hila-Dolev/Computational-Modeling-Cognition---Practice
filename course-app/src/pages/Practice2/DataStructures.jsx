@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import DragDropQuiz from '../../components/DragDropQuiz';
 import MultipleChoiceQuestion from '../../components/MultipleChoiceQuestion';
+import { saveAnswerToSheet } from '../../utils/apiService';
 
-function DataStructures({ onNext }) {
+function DataStructures({ username, startTime, onNext }) {
   const [showTerminalVector, setShowTerminalVector] = useState(false);
   const [showTerminalMatrix, setShowTerminalMatrix] = useState(false);
   const [showTerminalDF, setShowTerminalDF] = useState(false);
   const [showTerminalDFOps, setShowTerminalDFOps] = useState(false);
-
 
   const [answeredQuestions, setAnsweredQuestions] = useState({
     ds_dragdrop: false,
@@ -17,12 +17,33 @@ function DataStructures({ onNext }) {
     ds_q4: false
   });
 
-  
+  const [answersData, setAnswersData] = useState({
+    ds_dragdrop: '',
+    ds_q1: '',
+    ds_q2: '',
+    ds_q3: '',
+    ds_q4: ''
+  });
+
   const handleStatusChange = (id, hasAnswer) => {
     setAnsweredQuestions(prev => ({ ...prev, [id]: hasAnswer }));
   };
 
+  const handleAnswerData = (id, value) => {
+    setAnswersData(prev => ({ ...prev, [id]: value }));
+  };
+
   const canProceed = Object.values(answeredQuestions).every(Boolean);
+
+  const handleNextClick = () => {
+    const payload = {
+      username,
+      startTime,
+      ...answersData
+    };
+    saveAnswerToSheet("תרגול 2", payload);
+    onNext();
+  };
 
   return (
     <div className="section-card">
@@ -56,6 +77,7 @@ function DataStructures({ onNext }) {
         ]}
         correctAnswers={['inserting/ erasing', 'searching', 'sorting', 'changing/ transmuting', 'visual display']}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <hr className="section-divider" />
@@ -231,6 +253,7 @@ print(participants)`}
           { label: 'colors[0]', value: 'index_zero', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <MultipleChoiceQuestion 
@@ -242,6 +265,7 @@ print(participants)`}
           { label: 'אין הבדל, אלו פשוט שמות שונים לאותו מבנה נתונים.', value: 'no_diff', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <MultipleChoiceQuestion 
@@ -253,24 +277,25 @@ print(participants)`}
           { label: 'participants > age', value: 'greater_than', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <MultipleChoiceQuestion 
         id="ds_q4"
-        title="4. 
-        באילו פונקציות כדאי להשתמש כדי לבדוק את סוג מבנה הנתונים לפני שמתחילים לעבוד עליו?"
+        title="4. באילו פונקציות כדאי להשתמש כדי לבדוק את סוג מבנה הנתונים לפני שמתחילים לעבוד עליו?"
         options={[
           { label: 'type() או check()', value: 'type_check', isCorrect: false },
           { label: 'print() או show()', value: 'print_show', isCorrect: false },
           { label: 'class() או str()', value: 'class_str', isCorrect: true }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
       
       <div className="next-section">
         <button 
           className="next-btn" 
-          onClick={onNext}
+          onClick={handleNextClick}
           disabled={!canProceed}
         >
           המשך

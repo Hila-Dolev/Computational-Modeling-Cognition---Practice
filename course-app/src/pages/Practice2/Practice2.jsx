@@ -5,7 +5,7 @@ import Exercise2 from './Exercise2';
 import DataStructures from './DataStructures';
 import Dplyr from './Dplyr';
 
-function Practice2() {
+function Practice2({ username, startTime }) {
   const [activeSection, setActiveSection] = useState('loops');
 
   const renderNavLink = (id, text) => (
@@ -31,11 +31,11 @@ function Practice2() {
       </div>
 
       <div className="main-content">
-        {activeSection === 'loops' && <Loops onNext={() => setActiveSection('functions')} />}
-        {activeSection === 'functions' && <Functions onNext={() => setActiveSection('exercise')} />}
-        {activeSection === 'exercise' && <Exercise2 onNext={() => setActiveSection('data-structures')} />}
-        {activeSection === 'data-structures' && <DataStructures onNext={() => setActiveSection('dplyr')} />}
-        {activeSection === 'dplyr' && <Dplyr />}
+        {activeSection === 'loops' && <Loops username={username} startTime={startTime} onNext={() => setActiveSection('functions')} />}
+        {activeSection === 'functions' && <Functions username={username} startTime={startTime} onNext={() => setActiveSection('exercise')} />}
+        {activeSection === 'exercise' && <Exercise2 username={username} startTime={startTime} onNext={() => setActiveSection('data-structures')} />}
+        {activeSection === 'data-structures' && <DataStructures username={username} startTime={startTime} onNext={() => setActiveSection('dplyr')} />}
+        {activeSection === 'dplyr' && <Dplyr username={username} startTime={startTime} />}
       </div>
     </div>
   );

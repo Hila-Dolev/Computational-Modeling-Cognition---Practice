@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import MultipleChoiceQuestion from '../../components/MultipleChoiceQuestion';
 import DragDropQuiz from '../../components/DragDropQuiz';
+import { saveAnswerToSheet } from '../../utils/apiService';
 
-function Loops({ onNext }) {
+function Loops({ username, startTime, onNext }) {
   const [showTerminalFor, setShowTerminalFor] = useState(false);
   const [showTerminalWhile, setShowTerminalWhile] = useState(false);
 
- // States for visual animations
   const [activeForIndex, setActiveForIndex] = useState(null);
   const [currentSum, setCurrentSum] = useState(0);
   const [whileLimit, setWhileLimit] = useState(0.9);
@@ -18,16 +18,36 @@ function Loops({ onNext }) {
     loops_q4_dragdrop: false
   });
 
+  const [answersData, setAnswersData] = useState({
+    loops_q1_bg: '',
+    loops_q2_for: '',
+    loops_q3_while: '',
+    loops_q4_dragdrop: ''
+  });
+
   const handleStatusChange = (id, hasAnswer) => {
     setAnsweredQuestions(prev => ({ ...prev, [id]: hasAnswer }));
   };
 
+  const handleAnswerData = (id, value) => {
+    setAnswersData(prev => ({ ...prev, [id]: value }));
+  };
+
   const canProceed = Object.values(answeredQuestions).every(Boolean);
 
-  
+  const handleNextClick = () => {
+    const payload = {
+      username,
+      startTime,
+      ...answersData
+    };
+    saveAnswerToSheet("תרגול 2", payload);
+    onNext();
+  };
+
+  // ... (runForSimulation and runWhileSimulation functions remain exactly the same) ...
   const runForSimulation = () => {
     const scores = [85, 92, 78];
-    // Reset before starting
     setCurrentSum(0);
     setActiveForIndex(null);
 
@@ -35,10 +55,9 @@ function Loops({ onNext }) {
       setTimeout(() => {
         setActiveForIndex(idx);
         setCurrentSum(prev => prev + score);
-      }, (idx + 1) * 1200); // 1.2s delay for each step
+      }, (idx + 1) * 1200); 
     });
 
-    // Reset active index highlight at the end
     setTimeout(() => {
       setActiveForIndex(null);
     }, (scores.length + 1) * 1200);
@@ -93,6 +112,7 @@ function Loops({ onNext }) {
           { label: 'כדי לשמור משתנים בזיכרון של התוכנה לטווח ארוך.', value: 'memory', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <hr className="section-divider" />
@@ -170,6 +190,7 @@ for (val in scores) {
           { label: 'כאשר אנחנו רוצים שהקוד ירוץ לנצח בלי הפסקה.', value: 'infinite', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <hr className="section-divider" />
@@ -231,6 +252,7 @@ while (limit > 0.5) {
           { label: 'המערכת תמיר את הלולאה באופן אוטומטי ללולאת for.', value: 'auto_convert', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <hr className="section-divider" />
@@ -248,12 +270,13 @@ while (limit > 0.5) {
         ]}
         correctAnswers={['for', 'while', 'תנאי עצירה', 'אין-סופית', 'וקטור']}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <div className="next-section">
         <button 
           className="next-btn" 
-          onClick={onNext}
+          onClick={handleNextClick}
           disabled={!canProceed}
         >
           המשך

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import MultipleChoiceQuestion from '../../components/MultipleChoiceQuestion';
 import ShortAnswerQuestion from '../../components/ShortAnswerQuestion';
+import { saveAnswerToSheet } from '../../utils/apiService';
 
-function Dplyr({ onNext }) {
+function Dplyr({ username, startTime, onNext }) {
   const [showTerminalSelect, setShowTerminalSelect] = useState(false);
   const [showTerminalFilter, setShowTerminalFilter] = useState(false);
   const [showTerminalMutate, setShowTerminalMutate] = useState(false);
@@ -18,11 +19,32 @@ function Dplyr({ onNext }) {
     dplyr_q4: false
   });
 
+  const [answersData, setAnswersData] = useState({
+    dplyr_q1: '',
+    dplyr_q2: '',
+    dplyr_q3: '',
+    dplyr_q4: ''
+  });
+
   const handleStatusChange = (id, hasAnswer) => {
     setAnsweredQuestions(prev => ({ ...prev, [id]: hasAnswer }));
   };
 
+  const handleAnswerData = (id, value) => {
+    setAnswersData(prev => ({ ...prev, [id]: value }));
+  };
+
   const canProceed = Object.values(answeredQuestions).every(Boolean);
+
+  const handleFinishClick = () => {
+    const payload = {
+      username,
+      startTime,
+      ...answersData
+    };
+    saveAnswerToSheet("תרגול 2", payload);
+    setShowPopup(true);
+  };
 
   return (
     <div className="section-card">
@@ -40,7 +62,7 @@ function Dplyr({ onNext }) {
 
       <hr className="section-divider" />
 
-      {/* 4. טיפ של מקצוענים - בלוק טעינה (מוקדם יותר כדי שיהיה הגיוני מבחינת זרימת הקוד) */}
+      {/* 4. טיפ של מקצוענים */}
       <div className="algo-sim-content">
         <strong> טיפ של מקצוענים: טעינת ספריות בקוד</strong><br/>
         בתחילת כל קובץ שבו נרצה לטעון ספריות, ניצור מקטע קוד המיועד לטעינת כל הספריות הרלוונטיות יחד.
@@ -52,7 +74,6 @@ library(dplyr)`}
           </code>
         </pre>
       </div>
-
 
       {/* 2. פונקציות נפוצות */}
       <h2>פונקציות נפוצות בספרייה</h2>
@@ -155,7 +176,6 @@ summarize(grouped_data, mean_weight = mean(weight, na.rm = TRUE))`}
         )}
       </div>
 
-
       {/* 3. אופרטור הצינור */}
       <h2>אופרטור הצינור (Pipe): <code>%&gt;%</code></h2>
       <p>
@@ -199,9 +219,6 @@ print(clean_data)`}
         )}
       </div>
 
-
-
-      {/* שאלות סיכום */}
       <MultipleChoiceQuestion 
         id="dplyr_q1"
         title="1. חוקר רוצה ליצור טבלה חדשה שתכיל עמודה של ציון מתוקנן (חישוב המבוסס על עמודת הציון המקורית). באיזו פונקציה מתוך ספריית dplyr עליו להשתמש?"
@@ -211,6 +228,7 @@ print(clean_data)`}
           { label: 'mutate() - כי הפונקציה מאפשרת יצירת עמודות חדשות או שינוי קיימות.', value: 'mutate', isCorrect: true }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <MultipleChoiceQuestion 
@@ -222,6 +240,7 @@ print(clean_data)`}
           { label: 'הוא מתקן שגיאות אוטומטית בתוך ה-Data Frame.', value: 'fix_errors', isCorrect: false }
         ]}
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <ShortAnswerQuestion 
@@ -232,6 +251,7 @@ print(clean_data)`}
         successMessage="מצוין!"
         errorMessage="לא מדויק. חפשו את פקודת הטעינה המלאה לספריית dplyr, לאחר התקנתה."
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <ShortAnswerQuestion 
@@ -242,12 +262,13 @@ print(clean_data)`}
         successMessage="נכון מאוד!"
         errorMessage="לא נכון. חפשו פונקציה שעוסקת בסינון הרשומות בטבלה."
         onStatusChange={handleStatusChange}
+        onAnswer={handleAnswerData}
       />
 
       <div className="next-section">
         <button 
           className="next-btn" 
-          onClick={() => setShowPopup(true)}
+          onClick={handleFinishClick}
           disabled={!canProceed}
         >
           סיום תרגול
